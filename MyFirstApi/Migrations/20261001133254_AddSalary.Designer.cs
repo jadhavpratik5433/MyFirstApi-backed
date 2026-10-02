@@ -12,8 +12,8 @@ using MyFirstApi.Data;
 namespace MyFirstApi.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260922053506_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20261001133254_AddSalary")]
+    partial class AddSalary
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -80,19 +80,32 @@ namespace MyFirstApi.Migrations
 
             modelBuilder.Entity("MyFirstApi.Entities.Salary", b =>
                 {
-                    b.Property<int>("SalaryBandId")
+                    b.Property<Guid>("SalaryId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("uniqueidentifier");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SalaryBandId"));
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
 
-                    b.Property<decimal>("MaxSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uniqueidentifier");
 
-                    b.Property<decimal>("MinSalary")
-                        .HasColumnType("decimal(18,2)");
+                    b.Property<string>("PaymentStatus")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("SalaryBandId");
+                    b.Property<string>("Remarks")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("SalaryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("SalaryMonth")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("SalaryId");
+
+                    b.HasIndex("EmployeeId");
 
                     b.ToTable("Salaries");
                 });
@@ -123,7 +136,18 @@ namespace MyFirstApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("AccountUsers");
+                    b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("MyFirstApi.Entities.Salary", b =>
+                {
+                    b.HasOne("MyFirstApi.Entities.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
                 });
 #pragma warning restore 612, 618
         }

@@ -138,7 +138,7 @@ builder.Services.AddAuthentication(options =>
 
             // Find User
             var user =
-                await db.AccountUsers
+                await db.Users
                     .FirstOrDefaultAsync(
                         x => x.Id == guidUserId
                     );
@@ -267,7 +267,7 @@ builder.Services.AddSwaggerGen(options =>
 // ======================================================
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<ISalaryService, SalaryServices>(); 
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 

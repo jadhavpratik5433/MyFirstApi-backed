@@ -31,7 +31,7 @@ namespace MyFirstApi.Services
 
                     return new Tuple<int, TokenDto>(0, tokenDto);
                 }
-                var existingUser = await _context.AccountUsers.FirstOrDefaultAsync(x => x.Email == dto.Email);
+                var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == dto.Email);
 
                 if (existingUser == null)
                 {
@@ -65,7 +65,7 @@ namespace MyFirstApi.Services
                     tokenDto.Message = "Login Successfull";
 
                     existingUser.SessionId = sessionId;
-                    _context.AccountUsers.Update(existingUser);
+                    _context.Users.Update(existingUser);
                     _context.SaveChanges();
 
 
@@ -83,7 +83,7 @@ namespace MyFirstApi.Services
                     existingUser.Password = PasswordHashing(dto);
                     existingUser.SessionId = sessionId;
 
-                    _context.AccountUsers.Update(existingUser);
+                    _context.Users.Update(existingUser);
                     _context.SaveChanges();
 
 
@@ -151,14 +151,14 @@ namespace MyFirstApi.Services
         {
             try
             {
-                var existingUser = await _context.AccountUsers.AnyAsync(x => x.Email == dto.Email);
+                var existingUser = await _context.Users.AnyAsync(x => x.Email == dto.Email);
 
                 if (existingUser)
                 {
                     return new Tuple<int, string>(0, "This User is already Exist, Please Register With New User!");
                 }
 
-                _context.AccountUsers.Add(new Entities.User
+                _context.Users.Add(new Entities.User
                 {
                     Id = Guid.NewGuid(),
                     Name = dto.Name,
@@ -191,10 +191,10 @@ namespace MyFirstApi.Services
 
         public async Task<string> GenerateQrCode(string email)
         {
-            var existingUser = await _context.AccountUsers.FirstOrDefaultAsync(x => x.Email == email);
+            var existingUser = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
             if (existingUser == null)
             {
-                existingUser=  _context.AccountUsers.Add(new Entities.User
+                existingUser=  _context.Users.Add(new Entities.User
                 {
                     Id = Guid.NewGuid(),
                     Email = email,
@@ -215,7 +215,7 @@ namespace MyFirstApi.Services
 
         public async Task<string> VerifyOTP(string email, string otp)
         {
-            var user = await _context.AccountUsers.FirstOrDefaultAsync(x => x.Email == email);
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             var key = Base32Encoding.ToBytes(user.TotpSecretKey);
             var totp = new Totp(key);

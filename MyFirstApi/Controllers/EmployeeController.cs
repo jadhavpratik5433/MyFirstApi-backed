@@ -7,7 +7,7 @@ using MyFirstApi.IService;
 
 namespace MyFirstApi.Controllers
 {
-    [Authorize]
+   [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class EmployeeController(IEmployeeService employeeService) : ControllerBase
